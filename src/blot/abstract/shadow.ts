@@ -7,16 +7,30 @@ class ShadowBlot implements Blot {
   static scope: Registry.Scope;
   static tagName: string;
 
+  /** The previous blot. */
   prev: Blot;
+
+  /** The next blot. */
   next: Blot;
+
+  /** The parent blot. */
   parent: Parent;
+
+  /** The nearest scroll blot. */
   scroll: Parent;
 
-  // Hack for accessing inherited static methods
+  /**
+   * Hack for accessing inherited static methods.
+   */
   get statics(): any {
     return this.constructor;
   }
 
+  /**
+   * Create an instance of the blot. Use this instead of the constructor.
+   *
+   * @param value - The value to initialize the Blot with.
+   */
   static create(value: any): Node {
     if (this.tagName == null) {
       throw new Registry.ParchmentError('Blot definition missing tagName');

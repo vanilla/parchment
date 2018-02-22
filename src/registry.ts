@@ -12,6 +12,11 @@ export class ParchmentError extends Error {
   name: string;
   stack: string;
 
+  /**
+   * Create a new Error.
+   *
+   * @param message - The error message
+   */
   constructor(message: string) {
     message = '[Parchment] ' + message;
     super(message);
@@ -25,6 +30,7 @@ let classes: { [key: string]: BlotConstructor } = {};
 let tags: { [key: string]: BlotConstructor } = {};
 let types: { [key: string]: Attributor | BlotConstructor } = {};
 
+/** The key that is used to store internal data about the blot. This get's attached to the DOMNode */
 export const DATA_KEY = '__blot';
 
 export enum Scope {
@@ -44,6 +50,12 @@ export enum Scope {
   ANY = TYPE | LEVEL,
 }
 
+/**
+ * Create a new Blot from the registry.
+ *
+ * @param input - The DOM Node of an existing blot, or a blotName.
+ * @param value - The value to instantiate the blot with.
+ */
 export function create(input: Node | string | Scope, value?: any): Blot {
   let match = query(input);
   if (match == null) {
@@ -56,6 +68,12 @@ export function create(input: Node | string | Scope, value?: any): Blot {
   return new BlotClass(<Node>node, value);
 }
 
+/**
+ * Get the blot instance attached to a DOM Node.
+ *
+ * @param node - The node to lookup.
+ * @param bubble - Whether or not to look up throught the parent Nodes of the given Node.
+ */
 export function find(node: Node | null, bubble: boolean = false): Blot | null {
   if (node == null) return null;
   // @ts-ignore
@@ -64,6 +82,14 @@ export function find(node: Node | null, bubble: boolean = false): Blot | null {
   return null;
 }
 
+/**
+ * Lookup the constructor from a DOM Node, blotName, or Scope.
+ *
+ * @param query - The DOM Node, blotName, or Scope.
+ * @param scope - Optional Scope to filter by.
+ *
+ * @returns An Attributor, Blot constructor, or null if nothing is found.
+ */
 export function query(
   query: string | Node | Scope,
   scope: Scope = Scope.ANY,
@@ -94,6 +120,9 @@ export function query(
   return null;
 }
 
+/**
+ * Register a Blot or Attributor. Can take multiple arguments.
+ */
 export function register(...Definitions: any[]): any {
   if (Definitions.length > 1) {
     return Definitions.map(function(d) {

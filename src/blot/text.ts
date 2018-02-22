@@ -2,6 +2,9 @@ import { Blot, Leaf } from './abstract/blot';
 import LeafBlot from './abstract/leaf';
 import * as Registry from '../registry';
 
+/**
+ * Blot that contains text content.
+ */
 class TextBlot extends LeafBlot implements Leaf {
   static blotName = 'text';
   static scope = Registry.Scope.INLINE_BLOT;
@@ -9,6 +12,9 @@ class TextBlot extends LeafBlot implements Leaf {
   public domNode: Text;
   protected text: string;
 
+  /**
+   * @inheritDoc
+   */
   static create(value: string): Text {
     return document.createTextNode(value);
   }
@@ -25,6 +31,9 @@ class TextBlot extends LeafBlot implements Leaf {
     this.text = this.statics.value(this.domNode);
   }
 
+  /**
+   * @inheritDoc
+   */
   deleteAt(index: number, length: number): void {
     this.domNode.data = this.text = this.text.slice(0, index) + this.text.slice(index + length);
   }
