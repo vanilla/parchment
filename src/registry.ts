@@ -10,7 +10,7 @@ export interface BlotConstructor {
 export class ParchmentError extends Error {
   message: string;
   name: string;
-  stack: string;
+  stack!: string;
 
   /**
    * Create a new Error.

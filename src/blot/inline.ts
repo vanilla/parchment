@@ -3,7 +3,12 @@ import LeafBlot from './abstract/leaf';
 import ShadowBlot from './abstract/shadow';
 import * as Registry from '../registry';
 
-// Shallow object comparison
+/**
+ * Shallowly compare the value of 2 objects.
+ *
+ * @param obj1 - The first object.
+ * @param obj2 - The second object.
+ */
 function isEqual(obj1: Object, obj2: Object): boolean {
   if (Object.keys(obj1).length !== Object.keys(obj2).length) return false;
   // @ts-ignore
@@ -14,16 +19,42 @@ function isEqual(obj1: Object, obj2: Object): boolean {
   return true;
 }
 
+/**
+ * Basic implementation of an inline scoped formattable parent Blot.
+ *
+ * Formatting an inline blot by default either wraps itself with another blot,
+ * or passes the call to the approprate child.
+ */
 class InlineBlot extends FormatBlot {
+
+  /** @inheritDoc */
   static blotName = 'inline';
+
+  /** @inheritDoc */
   static scope = Registry.Scope.INLINE_BLOT;
+
+  /** @inheritDoc */
   static tagName = 'SPAN';
 
+  /**
+   * Determine if a given DOM Node matches this Blot.
+   *
+   * DOM Node with the this Blot's tagName ("SPAN"), will not match this Blot directly.
+   * Span tags get optimized away.
+   *
+   * @param domNode - The DOM Node to check.
+   */
   static formats(domNode: HTMLElement): any {
     if (domNode.tagName === InlineBlot.tagName) return undefined;
     return super.formats(domNode);
   }
 
+  /**
+   *
+   *
+   * @param name
+   * @param value
+   */
   format(name: string, value: any) {
     if (name === this.statics.blotName && !value) {
       this.children.forEach(child => {
@@ -47,6 +78,12 @@ class InlineBlot extends FormatBlot {
     }
   }
 
+  /**
+   * Reduce the complexity of the DOM tree.
+   *
+   * - Unwraps itself if it has no format.
+   * - Merges the next InlineBlot into itself if it has the same formats.
+   */
   optimize(context: { [key: string]: any }): void {
     super.optimize(context);
     let formats = this.formats();

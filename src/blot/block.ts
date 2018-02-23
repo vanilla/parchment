@@ -1,17 +1,33 @@
 import FormatBlot from './abstract/format';
 import * as Registry from '../registry';
 
+/**
+ * Basic implementation of a block scoped formattable parent Blot.
+ * Formatting a block blot by default will replace the appropriate subsection of the blot.
+ */
 class BlockBlot extends FormatBlot {
+
+  /** @inheritDoc */
   static blotName = 'block';
+
+  /** @inheritDoc */
   static scope = Registry.Scope.BLOCK_BLOT;
+
+  /** @inheritDoc */
   static tagName = 'P';
 
+  /**
+   * @inheritDoc
+   */
   static formats(domNode: HTMLElement): any {
     let tagName = (<any>Registry.query(BlockBlot.blotName)).tagName;
     if (domNode.tagName === tagName) return undefined;
     return super.formats(domNode);
   }
 
+  /**
+   * @inheritDoc
+   */
   format(name: string, value: any) {
     if (Registry.query(name, Registry.Scope.BLOCK) == null) {
       return;
@@ -22,6 +38,9 @@ class BlockBlot extends FormatBlot {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   formatAt(index: number, length: number, name: string, value: any): void {
     if (Registry.query(name, Registry.Scope.BLOCK) != null) {
       this.format(name, value);
@@ -30,6 +49,9 @@ class BlockBlot extends FormatBlot {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   insertAt(index: number, value: string, def?: any): void {
     if (def == null || Registry.query(value, Registry.Scope.INLINE) != null) {
       // Insert text or inline
@@ -41,6 +63,9 @@ class BlockBlot extends FormatBlot {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   update(mutations: MutationRecord[], context: { [key: string]: any }): void {
     if (navigator.userAgent.match(/Trident/)) {
       this.build();

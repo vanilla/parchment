@@ -13,14 +13,32 @@ const OBSERVER_CONFIG = {
 
 const MAX_OPTIMIZE_ITERATIONS = 100;
 
+/**
+ * The root parent blot of a Parchment document. It is not formattable.
+ */
 class ScrollBlot extends ContainerBlot {
+
+  /** @inheritDoc */
   static blotName = 'scroll';
+
+  /** @inheritDoc */
   static defaultChild = 'block';
+
+  /** @inheritDoc */
   static scope = Registry.Scope.BLOCK_BLOT;
+
+  /** @inheritDoc */
   static tagName = 'DIV';
 
   observer: MutationObserver;
 
+  /**
+   * Constructor
+   *
+   * Adds a MutationObserver to orchestrate changes on all of it's child blots.
+   *
+   * @param node - The DOM Node to attach to.
+   */
   constructor(node: HTMLDivElement) {
     super(node);
     this.scroll = this;
@@ -31,11 +49,17 @@ class ScrollBlot extends ContainerBlot {
     this.attach();
   }
 
+  /**
+   * @inheritDoc
+   */
   detach() {
     super.detach();
     this.observer.disconnect();
   }
 
+  /**
+   * @inheritDoc
+   */
   deleteAt(index: number, length: number): void {
     this.update();
     if (index === 0 && length === this.length()) {
@@ -47,18 +71,35 @@ class ScrollBlot extends ContainerBlot {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   formatAt(index: number, length: number, name: string, value: any): void {
     this.update();
     super.formatAt(index, length, name, value);
   }
 
+  /**
+   * @inheritDoc
+   */
   insertAt(index: number, value: string, def?: any): void {
     this.update();
     super.insertAt(index, value, def);
   }
 
+  /**
+   * @inheritDoc
+   */
   optimize(context: { [key: string]: any }): void;
+
+  /**
+   * @inheritDoc
+   */
   optimize(mutations: MutationRecord[], context: { [key: string]: any }): void;
+
+  /**
+   * @inheritDoc
+   */
   optimize(mutations: any = [], context: any = {}): void {
     super.optimize(context);
     // We must modify mutations directly, cannot make copy and then modify
@@ -125,6 +166,9 @@ class ScrollBlot extends ContainerBlot {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   update(mutations?: MutationRecord[], context: { [key: string]: any } = {}): void {
     mutations = mutations || this.observer.takeRecords();
     // TODO use WeakMap
